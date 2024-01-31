@@ -38,34 +38,29 @@ class IntegrationPostAPI(APIView):
     @transaction.atomic
     def post(self, request):
 
-        try:
-            rd = request.data
-            user = request.user
+        rd = request.data
+        user = request.user
 
-            if rd['platform'] == "facebook":
-                res = {}
-                if rd['post_type'] == "text":
-                    res = fb_obj.put_object("me", "feed", message=rd['text'])
-                    photo = None
+        if rd['platform'] == "facebook":
+            res = {}
+            if rd['post_type'] == "text":
+                res = fb_obj.put_object("me", "feed", message=rd['text'])
+                photo = None
 
-                elif rd['post_type'] == "photo":
-                    res = fb_obj.put_photo(request.FILES['photo'], message=rd['text'] if rd.get('text', None) is not None else "")
-                    photo = upload_media(request, platform="facebook")
+            elif rd['post_type'] == "photo":
+                res = fb_obj.put_photo(request.FILES['photo'], message=rd['text'] if rd.get('text', None) is not None else "")
+                photo = upload_media(request, platform="facebook")
 
-                print("res :: ", res)
-            
-            else:
-                return Response({"success": False, "message": "Unknown platform!"})
+            print("res :: ", res)
+        
+        else:
+            return Response({"success": False, "message": "Unknown platform!"})
 
-            
-            new_ph = PostHistory.objects.create(user=user, platform=rd['platform'], photo=photo, text=rd['text'],
-                                                post_type=rd['post_type'], response=res)
+        
+        new_ph = PostHistory.objects.create(user=user, platform=rd['platform'], photo=photo, text=rd['text'],
+                                            post_type=rd['post_type'], response=res)
 
-            return Response({"success": True, "message": "Post created successfully!"})
-
-        except Exception as err:
-            print(err)
-            return Response({"success": False, "message": "Something went wrong!"})
+        return Response({"success": True, "message": "Post created successfully!"})
 
 
 class IntegrationAddPlatformAPI(APIView):
@@ -76,22 +71,16 @@ class IntegrationAddPlatformAPI(APIView):
     @transaction.atomic
     def post(self, request):
 
-        try:
-            rd = request.data
-            user = request.user
+        rd = request.data
+        user = request.user
 
-            if rd['platform'] == "facebook":
-                CustomUser.objects.filter(id=user.id).update(is_added_fb=True)
+        if rd['platform'] == "facebook":
+            CustomUser.objects.filter(id=user.id).update(is_added_fb=True)
 
-            if rd['platform'] == "instagram":
-                CustomUser.objects.filter(id=user.id).update(is_added_insta=True)
+        if rd['platform'] == "instagram":
+            CustomUser.objects.filter(id=user.id).update(is_added_insta=True)
 
-            return Response({"success": True, "message": "Platform added successfully!"})
-
-        except Exception as err:
-            print(err)
-            return Response({"success": False, "message": "Something went wrong!"})
-
+        return Response({"success": True, "message": "Platform added successfully!"})
 
 
 

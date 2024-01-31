@@ -28,27 +28,22 @@ class UserLogin(APIView):
     @transaction.atomic
     def post(self, request):
 
-        try:
-            rd = request.data
-            user = CustomUser.objects.filter(email=rd['email']).first()
-            if user == None:
+        rd = request.data
+        user = CustomUser.objects.filter(email=rd['email']).first()
+        if user == None:
 
-                user = CustomUser.objects.create(email=rd['email'], username=rd['email'], full_name=rd['fname'], 
-                                                    is_verified=True, email_verified_at=datetime.datetime.now())
-            
-            token = RefreshToken.for_user(user)
-            data = CustomUserSerializer(user).data
+            user = CustomUser.objects.create(email=rd['email'], username=rd['email'], full_name=rd['fname'], 
+                                                is_verified=True, email_verified_at=datetime.datetime.now())
+        
+        token = RefreshToken.for_user(user)
+        data = CustomUserSerializer(user).data
 
-            return Response({"success": True, "message": "User login successful!", "data": data,
-                             "authToken": {
-                                'type': 'Bearer',
-                                'access': str(token.access_token),
-                                'refresh': str(token),
-                            }})
-
-        except Exception as err:
-            print(err)
-            return Response({"success": False, "message": "Something went wrong!",})
+        return Response({"success": True, "message": "User login successful!", "data": data,
+                            "authToken": {
+                            'type': 'Bearer',
+                            'access': str(token.access_token),
+                            'refresh': str(token),
+                        }})
 
 
 
