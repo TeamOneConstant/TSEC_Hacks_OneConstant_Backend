@@ -3,7 +3,7 @@ from integrations.views import *
 
 urlpatterns = [
 
-    path('facebook/post', FacebookIntegrationAPI.as_view(), name="facebook-post"),
+    path('post', FacebookIntegrationAPI.as_view(), name="facebook-post"),
 
 ]
 
