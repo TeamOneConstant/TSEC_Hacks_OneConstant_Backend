@@ -30,7 +30,7 @@ fb_obj = fb.GraphAPI(fb_access_token)
 
 
 
-class FacebookIntegrationAPI(APIView):
+class IntegrationPostAPI(APIView):
 
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
@@ -62,6 +62,31 @@ class FacebookIntegrationAPI(APIView):
                                                 post_type=rd['post_type'], response=res)
 
             return Response({"success": True, "message": "Post created successfully!"})
+
+        except Exception as err:
+            print(err)
+            return Response({"success": False, "message": "Something went wrong!"})
+
+
+class IntegrationAddPlatformAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    @transaction.atomic
+    def post(self, request):
+
+        try:
+            rd = request.data
+            user = request.user
+
+            if rd['platform'] == "facebook":
+                CustomUser.objects.filter(id=user.id).update(is_added_fb=True)
+
+            if rd['platform'] == "instagram":
+                CustomUser.objects.filter(id=user.id).update(is_added_insta=True)
+
+            return Response({"success": True, "message": "Platform added successfully!"})
 
         except Exception as err:
             print(err)

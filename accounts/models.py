@@ -54,6 +54,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150)
 
     full_name = models.CharField(max_length=100)
+
+    is_added_fb = models.BooleanField(default=False)
+    is_added_insta = models.BooleanField(default=False)
     
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
