@@ -51,7 +51,7 @@ class IntegrationPostAPI(APIView):
                 photo = None
 
             elif rd['post_type'] == "photo":
-                res = fb_obj.put_photo(request.FILES['photo'][0], message=rd['text'])
+                res = fb_obj.put_photo(request.FILES.get('photo'), message=rd['text'])
                 photo = upload_media(request, platform="facebook")
 
             print("res :: ", res)
