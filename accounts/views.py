@@ -12,6 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from accounts.models import *
 from accounts.serializers import *
 
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 
@@ -26,6 +28,7 @@ class UserLogin(APIView):
     authentication_classes = []
 
     @transaction.atomic
+    @csrf_exempt
     def post(self, request):
 
         rd = request.data

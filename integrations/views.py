@@ -18,6 +18,8 @@ import facebook as fb
 from integrations.helpers import upload_media
 from integrations.models import *
 
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 
@@ -36,6 +38,7 @@ class IntegrationPostAPI(APIView):
     authentication_classes = [JWTAuthentication]
 
     @transaction.atomic
+    @csrf_exempt
     def post(self, request):
 
         rd = request.data
@@ -48,7 +51,7 @@ class IntegrationPostAPI(APIView):
                 photo = None
 
             elif rd['post_type'] == "photo":
-                res = fb_obj.put_photo(request.FILES['photo'], message=rd['text'] if rd.get('text', None) is not None else "")
+                res = fb_obj.put_photo(request.FILES['photo'][0], message=rd['text'])
                 photo = upload_media(request, platform="facebook")
 
             print("res :: ", res)
@@ -69,6 +72,7 @@ class IntegrationAddPlatformAPI(APIView):
     authentication_classes = [JWTAuthentication]
 
     @transaction.atomic
+    @csrf_exempt
     def post(self, request):
 
         rd = request.data
